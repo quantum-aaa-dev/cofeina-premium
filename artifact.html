@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аромат - Кофейня премиум-класса</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --body-bg: #2C1810;
+            --accent-gold: #C8A45A;
+            --text-cream: #F5F0E6;
+            --milk-light: #F5E6D3;
+            --card-bg: rgba(20, 10, 5, 0.7);
+            --border-color: rgba(200, 164, 90, 0.2);
+            --frame-bg: rgba(35, 20, 8, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--body-bg);
+            color: var(--text-cream);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .water-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #3d2318, #2C1810);
+            overflow: hidden;
+        }
+        .water-blob {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: var(--accent-gold);
+            filter: blur(120px);
+            opacity: 0.15;
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        @keyframes drift1 { from { transform: translate(0, 0) rotate(0deg); } to   { transform: translate(20vw, 10vh) rotate(360deg); } }
+        @keyframes drift2 { from { transform: translate(0, 0) rotate(0deg); } to   { transform: translate(15vw, 20vh) rotate(360deg); } }
+        @keyframes drift3 { from { transform: translate(0, 0) rotate(0deg); } to   { transform: translate(25vw, 15vh) rotate(360deg); } }
+        @keyframes drift4 { from { transform: translate(0, 0) rotate(0deg); } to   { transform: translate(10vw, 25vh) rotate(360deg); } }
+        @keyframes drift5 { from { transform: translate(0, 0) rotate(0deg); } to   { transform: translate(22vw, 18vh) rotate(360deg); } }
+        .blob-1 { animation: drift1 16s infinite alternate; }
+        .blob-2 { animation: drift2 16s infinite alternate; animation-delay: -2s; }
+        .blob-3 { animation: drift3 16s infinite alternate; animation-delay: -4s; }
+        .blob-4 { animation: drift4 16s infinite alternate; animation-delay: -6s; }
+        .blob-5 { animation: drift5 16s infinite alternate; animation-delay: -8s; }
+
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+        header { position: fixed; top: 0; width: 100%; z-index: 100; transition: 0.3s; }
+        header.scrolled { background: rgba(44, 24, 16, 0.9); backdrop-filter: blur(10px); padding: 10px 0; }
+        .Header-container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 28px; color: var(--accent-gold); text-decoration: none; font-weight: 900; }
+        .nav-links { display: flex; gap: 30px; list-style: none; }
+        .nav-links a { color: var(--text-cream); text-decoration: none; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent-gold); }
+
+        .burger { display: none; width: 30px; height: 21px; position: relative; }
+        .burger span { position: absolute; left: 0; width: 100%; height: 3px; background: var(--accent-gold); transition: 0.3s; border-radius: 2px; }
+        .burger span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+        .burger span:nth-child(3) { bottom: 0; }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            margin-top: 80px;
+        }
+        .hero h1 {
+            font-size: clamp(3.5rem, 12vw, 8rem);
+            line-height: 1;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            max-width: 700px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        .btn-container { display: flex; gap: 20px; justify-content: center; position: relative; }
+        .btn {
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            cursor: pointer;
+            border: none;
+            position: relative;
+        }
+        .btn-primary { background: var(--accent-gold); color: var(--body-bg); }
+        .btn-secondary { background: transparent; border: 2px solid var(--accent-gold); color: var(--accent-gold); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(200,164,90,0.3); }
+
+        .particle { position: absolute; pointer-events: none; border-radius: 50%; z-index: 10; }
+
+        section { padding: 100px 20px 0 20px; max-width: 1200px; margin: 0 auto; scroll-margin-top: 90px; }
+
+        .about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .about-card {
+            background: var(--card-bg);
+            padding: 50px 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+            position: relative;
+        }
+        .about-card:hover { border-color: var(--accent-gold); }
+        .about-icon { font-size: 52px; margin-bottom: 20px; display: inline-block; transition: transform 0.3s; cursor: default; }
+        .about-card:hover .about-icon { transform: scale(1.15); }
+        .about-card h3 { margin-bottom: 15px; color: var(--accent-gold); font-size: 24px; }
+        .about-card p { font-size: 15px; line-height: 1.6; opacity: 0.85; }
+
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .menu-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.35s, box-shadow 0.35s, border-color 0.35s;
+        }
+        .menu-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 0 15px var(--accent-gold), 0 0 30px rgba(200,164,90,0.2);
+            border-color: rgba(200,164,90,0.5);
+        }
+        .menu-card .img-placeholder { width: 80px; height: 80px; background: var(--accent-gold); margin: 0 auto 20px; border-radius: 50%; opacity: 0.6; }
+        .menu-card h4 { font-size: 22px; margin-bottom: 10px; }
+        .menu-card p { font-size: 14px; opacity: 0.8; margin-bottom: 15px; min-height: 40px; }
+        .menu-card .price { display: block; font-weight: 700; color: var(--accent-gold); margin-bottom: 20px; font-size: 18px; }
+        .btn-add { padding: 10px 20px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .menu-card .btn-add:hover { background: var(--accent-gold); color: var(--body-bg); }
+
+        .testimonials-controls { display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
+        .sort-btn {
+            padding: 10px 22px; border-radius: 50px; border: 1px solid var(--border-color);
+            background: transparent; color: var(--text-cream); font-size: 13px;
+            cursor: pointer; transition: 0.3s; font-family: 'Inter', sans-serif;
+        }
+        .sort-btn:hover, .sort-btn.active {
+            background: var(--accent-gold); color: var(--body-bg);
+            border-color: var(--accent-gold);
+        }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        .testimonial-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+        .testimonial-card:hover { border-color: var(--accent-gold); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .testimonial-card { animation: fadeIn 0.4s ease; }
+        .stars { color: rgba(255, 255, 255, 0.2); margin-bottom: 15px; font-size: 18px; letter-spacing: 2px; }
+        .stars .filled { color: var(--accent-gold); }
+        .testimonial-card p { font-style: italic; margin-bottom: 20px; line-height: 1.6; }
+        .testimonial-card .name { font-weight: 600; color: var(--accent-gold); }
+
+        .review-modal-content {
+            background: var(--card-bg);
+            padding: 30px 40px;
+            border-radius: 20px;
+            width: 92%;
+            max-width: 550px;
+            position: relative;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+        .review-modal-content .form-group input,
+        .review-modal-content .form-group textarea {
+            width: 100%; padding: 12px; background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color); border-radius: 8px;
+            color: #fff; font-family: inherit; font-size: 14px;
+        }
+        .review-modal-content .form-group input:focus,
+        .review-modal-content .form-group textarea:focus { outline: none; border-color: var(--accent-gold); }
+        .review-form {
+            max-width: 550px; margin: 0 auto; background: var(--card-bg);
+            padding: 35px; border-radius: 20px; border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+        .review-form h3 { text-align: center; margin-bottom: 25px; color: var(--accent-gold); font-size: 24px; }
+        .review-form .form-group { margin-bottom: 18px; }
+        .review-form label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--accent-gold); }
+        .review-form input, .review-form textarea {
+            width: 100%; padding: 12px; background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color); border-radius: 8px;
+            color: #fff; font-family: inherit; font-size: 14px;
+        }
+        .review-form input:focus, .review-form textarea:focus { outline: none; border-color: var(--accent-gold); }
+        .star-rating { display: flex; gap: 6px; justify-content: center; margin-bottom: 18px; }
+        .star-rating span {
+            font-size: 32px; cursor: pointer; color: rgba(255,255,255,0.2);
+            transition: color 0.2s, transform 0.2s; user-select: none;
+        }
+        .star-rating span:hover, .star-rating span.active { color: var(--accent-gold); transform: scale(1.15); }
+        .review-submit {
+            width: 100%; padding: 14px; background: var(--accent-gold);
+            color: var(--body-bg); border: none; border-radius: 50px;
+            font-weight: 600; cursor: pointer; text-transform: uppercase;
+            font-family: 'Inter', sans-serif; font-size: 14px; transition: 0.3s;
+        }
+        .review-submit:hover { box-shadow: 0 8px 25px rgba(200,164,90,0.3); }
+
+        .order-title {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+        }
+        .order-title h2 {
+            font-size: 36px;
+            color: var(--accent-gold);
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+        }
+        .order-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--accent-gold);
+        }
+
+        .order-frame {
+            background: var(--frame-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 40px 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            backdrop-filter: blur(15px);
+        }
+
+        .order-cart {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--text-cream);
+        }
+        .cart-item .remove {
+            background: transparent;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+        }
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        .order-type {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .type-btn {
+            padding: 12px 24px;
+            border: 2px solid var(--accent-gold);
+            background: transparent;
+            color: var(--accent-gold);
+            border-radius: 50px;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+        .type-btn:hover, .type-btn.active {
+            background: var(--accent-gold);
+            color: var(--body-bg);
+        }
+
+        .order-form .form-group { margin-bottom: 18px; }
+        .order-form label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--accent-gold); }
+        .order-form input, .order-form textarea {
+            width: 100%; padding: 12px; background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color); border-radius: 8px;
+            color: #fff; font-family: inherit; font-size: 14px;
+        }
+        .order-form input:focus, .order-form textarea:focus { outline: none; border-color: var(--accent-gold); }
+        .order-form .form-btn {
+            width: 100%; padding: 14px; background: var(--accent-gold);
+            color: var(--body-bg); border: none; border-radius: 50px;
+            font-weight: 600; cursor: pointer; text-transform: uppercase;
+            font-family: 'Inter', sans-serif; font-size: 14px; transition: 0.3s;
+            margin-top: 10px;
+        }
+        .order-form .form-btn:hover { box-shadow: 0 8px 25px rgba(200,164,90,0.3); }
+
+        footer { padding: 40px 20px; text-align: center; border-top: 1px solid var(--border-color); margin-top: 50px; opacity: 0.7; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 3.5rem; }
+            .btn-container { flex-direction: column; align-items: center; }
+            .about-grid, .menu-grid, .testimonial-grid { grid-template-columns: 1fr; }
+        }
+
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+        .toast {
+            background: var(--accent-gold);
+            color: var(--body-bg);
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            white-space: nowrap;
+        }
+        .toast.visible { opacity: 1; transform: translateY(0); }
+
+        .review-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44,24,16,0.92); z-index: 3000; justify-content: center; align-items: center; }
+        .review-modal-content { background: var(--card-bg); padding: 30px 40px; border-radius: 20px; width: 92%; max-width: 550px; position: relative; border: 1px solid var(--border-color); }
+        .review-modal-close { position: absolute; top: 15px; right: 20px; color: var(--accent-gold); font-size: 28px; font-weight: bold; cursor: pointer; }
+        .review-modal-close:hover { color: var(--text-cream); }
+
+        /* --- МОДАЛЬНОЕ ОКНО ВВОДА ПАРОЛЯ --- */
+        #adminPasswordModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(20, 10, 5, 0.88);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        #adminPasswordModal.active { display: flex; }
+
+        .admin-pwd-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px 35px 30px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: pwdFadeIn 0.3s ease;
+        }
+        @keyframes pwdFadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .admin-pwd-close {
+            position: absolute;
+            top: 12px; right: 18px;
+            color: var(--accent-gold);
+            font-size: 26px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            line-height: 1;
+        }
+        .admin-pwd-close:hover { color: var(--text-cream); transform: rotate(90deg); }
+
+        .admin-pwd-icon {
+            font-size: 44px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .admin-pwd-box h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--accent-gold);
+            font-size: 24px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .admin-pwd-box p {
+            font-size: 14px;
+            opacity: 0.75;
+            margin-bottom: 22px;
+            line-height: 1.5;
+        }
+
+        .admin-pwd-box input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            letter-spacing: 1px;
+            margin-bottom: 18px;
+            transition: 0.3s;
+        }
+        .admin-pwd-box input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(200,164,90,0.15);
+        }
+
+        .admin-pwd-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent-gold);
+            color: var(--body-bg);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+        .admin-pwd-btn:hover { box-shadow: 0 8px 25px rgba(200,164,90,0.35); transform: translateY(-2px); }
+
+        .admin-pwd-error {
+            color: #ff6b6b;
+            font-size: 13px;
+            min-height: 18px;
+            margin-bottom: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .admin-pwd-error.visible { opacity: 1; }
+
+        .admin-pwd-hint {
+            margin-top: 18px;
+            font-size: 11px;
+            opacity: 0.4;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- АДМИН-ПАНЕЛЬ --- */
+        #adminOverlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(10, 5, 2, 0.97);
+            z-index: 9998;
+            color: #fff;
+            padding: 30px 20px;
+            font-family: 'Inter', sans-serif;
+            display: none;
+            overflow-y: auto;
+        }
+        #adminOverlay.active { display: block; }
+        #adminOverlay .close-admin {
+            position: fixed; top: 20px; right: 20px;
+            width: 42px; height: 42px;
+            background: var(--accent-gold);
+            color: var(--body-bg);
+            text-align: center;
+            line-height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(200,164,90,0.3);
+            z-index: 10001;
+        }
+        #adminOverlay .close-admin:hover {
+            background: #a68b42;
+            transform: rotate(90deg) scale(1.05);
+        }
+        #adminOverlay h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            color: var(--accent-gold);
+            font-size: 32px;
+        }
+        #adminOverlay .tabs { display: flex; gap: 10px; margin-bottom: 30px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        #adminOverlay .tab {
+            flex: 1; padding: 12px; background: var(--card-bg);
+            border: 1px solid var(--border-color); border-radius: 12px; cursor: pointer;
+            transition: 0.3s; color: var(--text-cream);
+            text-align: center; font-size: 14px; letter-spacing: 0.5px;
+        }
+        #adminOverlay .tab.active { background: var(--accent-gold); color: var(--body-bg); border-color: var(--accent-gold); font-weight: 600; }
+        #adminOverlay .tab-content { display: none; }
+        #adminOverlay .tab-content.active { display: block; }
+        #adminOverlay .tab-content > h3 {
+            text-align: center;
+            color: var(--accent-gold);
+            font-size: 22px;
+            margin-bottom: 25px;
+        }
+
+        /* --- Админ: карточки меню как на сайте --- */
+        #adminMenuGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto 30px;
+        }
+        #adminMenuGrid .menu-card { position: relative; }
+        #adminMenuGrid .menu-card .card-delete {
+            position: absolute;
+            top: 12px; right: 12px;
+            width: 28px; height: 28px;
+            background: rgba(255, 107, 107, 0.15);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: #ff6b6b;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #adminMenuGrid .menu-card .card-delete:hover {
+            background: #ff6b6b;
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        /* --- Админ: форма добавления позиции --- */
+        .admin-add-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--frame-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+        }
+        .admin-add-form h4 {
+            color: var(--accent-gold);
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+        }
+        .admin-add-form .form-group { margin-bottom: 16px; }
+        .admin-add-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--accent-gold);
+        }
+        .admin-add-form input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .admin-add-form input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(200,164,90,0.15);
+        }
+        .admin-add-form .form-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent-gold);
+            color: var(--body-bg);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: 0.3s;
+            margin-top: 8px;
+        }
+        .admin-add-form .form-btn:hover { box-shadow: 0 8px 25px rgba(200,164,90,0.3); }
+
+        /* --- Админ: отзывы как на сайте --- */
+        #adminReviewsGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        #adminReviewsGrid .testimonial-card { position: relative; }
+        #adminReviewsGrid .testimonial-card .card-delete {
+            position: absolute;
+            top: 15px; right: 15px;
+            width: 28px; height: 28px;
+            background: rgba(255, 107, 107, 0.15);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: #ff6b6b;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #adminReviewsGrid .testimonial-card .card-delete:hover {
+            background: #ff6b6b;
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        /* --- Админ: заказы карточками --- */
+        #adminOrdersGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .order-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+            position: relative;
+        }
+        .order-card:hover { border-color: var(--accent-gold); }
+        .order-card .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .order-card .order-id {
+            font-family: 'Playfair Display', serif;
+            color: var(--accent-gold);
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .order-card .order-date { font-size: 12px; opacity: 0.6; }
+        .order-card .order-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+        .order-card .order-row .label { opacity: 0.65; }
+        .order-card .order-row .value { color: var(--text-cream); font-weight: 500; }
+        .order-card .order-items {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border-color);
+        }
+        .order-card .order-items .items-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+            margin-bottom: 8px;
+        }
+        .order-card .order-items .item-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 3px 0;
+            opacity: 0.85;
+        }
+        .order-card .order-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            color: var(--accent-gold);
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .order-card .order-delete-btn {
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            color: #ff6b6b;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .order-card .order-delete-btn:hover {
+            background: #ff6b6b;
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            opacity: 0.5;
+            padding: 40px 20px;
+            font-size: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Кнопка входа в админку (снизу слева) */
+        #adminBtn {
+            position: fixed; bottom: 20px; left: 20px;
+            background: transparent; border: 1px solid var(--accent-gold);
+            color: var(--accent-gold); padding: 6px 12px; border-radius: 20px;
+            font-size: 11px; font-family: 'Inter', sans-serif; text-transform: uppercase;
+            cursor: pointer; z-index: 9999; white-space: nowrap;
+            transition: 0.3s;
+        }
+        #adminBtn:hover { background: var(--accent-gold); color: var(--body-bg); }
+
+        .section-title { text-align: center; font-size: 42px; margin-bottom: 60px; color: var(--accent-gold); }
+
+        /* --- СТИЛИ ДЛЯ КАСТОМНОГО ОКНА ПОДТВЕРЖДЕНИЯ ЗАКАЗА --- */
+        .custom-alert-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(20, 10, 5, 0.88);
+            backdrop-filter: blur(8px);
+            z-index: 10002;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .custom-alert-overlay.active {
+            display: flex;
+        }
+        .custom-alert-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px 35px 30px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            animation: alertFadeIn 0.3s ease;
+        }
+        @keyframes alertFadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .custom-alert-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .custom-alert-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--accent-gold);
+            font-size: 24px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .custom-alert-message {
+            font-size: 15px;
+            line-height: 1.7;
+            opacity: 0.9;
+            margin-bottom: 25px;
+            color: var(--text-cream);
+        }
+        .custom-alert-message strong {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+        .custom-alert-close-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent-gold);
+            color: var(--body-bg);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+        .custom-alert-close-btn:hover {
+            box-shadow: 0 8px 25px rgba(200,164,90,0.35);
+            transform: translateY(-2px);
+        }
+        .custom-alert-close-x {
+            position: absolute;
+            top: 12px; right: 18px;
+            color: var(--accent-gold);
+            font-size: 26px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            line-height: 1;
+        }
+        .custom-alert-close-x:hover {
+            color: var(--text-cream);
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="water-bg">
+        <div class="water-blob blob-1"></div>
+        <div class="water-blob blob-2"></div>
+        <div class="water-blob blob-3"></div>
+        <div class="water-blob blob-4"></div>
+        <div class="water-blob blob-5"></div>
+    </div>
+
+    <header id="header">
+        <div class="Header-container">
+            <a href="#" class="logo">☕ Аромат</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#about">О нас</a></li>
+                    <li><a href="#menu">Меню</a></li>
+                    <li><a href="#testimonials">Отзывы</a></li>
+                    <li><a href="#order">Заказ</a></li>
+                </ul>
+            </div>
+            <div class="burger" id="burgerMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Искусство в каждой чашке</h1>
+        <p>Погрузитесь в атмосферу изысканного вкуса и неповторимого аромата свежеобжаренного кофе премиум-класса.</p>
+        <div class="btn-container">
+            <a href="#menu" class="btn btn-primary">Наше меню</a>
+            <a href="#order" class="btn btn-secondary">Заказать сейчас</a>
+        </div>
+    </section>
+
+    <section id="about">
+        <h2 class="section-title">Почему выбирают нас</h2>
+        <div class="about-grid">
+            <div class="about-card">
+                <div class="about-icon">🔥</div>
+                <h3>Свежая обжарка</h3>
+                <p>Мы обжариваем зерна прямо в кофейне, сохраняя максимум эфирных масел и аромата.</p>
+            </div>
+            <div class="about-card">
+                <div class="about-icon">☕</div>
+                <h3>Мастера-бариста</h3>
+                <p>Наши эксперты знают о кофе всё и приготовят напиток ровно так, как вы любите.</p>
+            </div>
+            <div class="about-card">
+                <div class="about-icon">🕯️</div>
+                <h3>Уютная атмосфера</h3>
+                <p>Идеальное место для работы, встреч или тихого утра наедине с собой.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu">
+        <h2 class="section-title">Наше меню</h2>
+        <div class="menu-grid" id="menuGrid"></div>
+    </section>
+
+    <section id="testimonials">
+        <h2 class="section-title">Отзывы клиентов</h2>
+
+        <div class="testimonials-controls">
+            <button class="sort-btn active" data-sort="newest">Сначала новые</button>
+            <button class="sort-btn" data-sort="oldest">Сначала старые</button>
+            <button class="sort-btn" data-sort="rating">По рейтингу</button>
+        </div>
+
+        <div class="testimonial-grid" id="testimonialGrid"></div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <button class="btn btn-primary" id="openReviewModalBtn" style="padding: 12px 24px; border-radius: 50px; font-size: 14px; text-transform: uppercase; cursor: pointer;">Написать отзыв</button>
+        </div>
+
+        <div id="reviewModal" class="review-modal">
+            <div class="review-modal-content">
+                <span class="review-modal-close">&times;</span>
+                <h3>Написать отзыв</h3>
+                <div class="form-group">
+                    <label>Текст отзыва</label>
+                    <textarea id="reviewText" rows="4" placeholder="Поделитесь своим впечатлением..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ваше имя</label>
+                    <input type="text" id="reviewName" placeholder="Иван">
+                </div>
+                <div class="star-rating" id="reviewStars">
+                    <span data-value="1">★</span>
+                    <span data-value="2">★</span>
+                    <span data-value="3">★</span>
+                    <span data-value="4">★</span>
+                    <span data-value="5">★</span>
+                </div>
+                <input type="hidden" id="reviewRating">
+                <button class="review-submit" id="submitReview">Опубликовать</button>
+            </div>
+        </div>
+
+        <div id="toastContainer" class="toast-container"></div>
+    </section>
+
+    <section id="order">
+        <div class="order-title">
+            <h2>Оформить заказ</h2>
+        </div>
+        <div class="order-frame">
+            <div class="order-cart">
+                <div id="cartItemsList" style="font-size:14px;"></div>
+                <div class="cart-total">
+                    <span>Итого:</span>
+                    <span id="totalSum">0 ₽</span>
+                </div>
+            </div>
+            <form class="order-form" id="orderForm">
+                <div class="form-group">
+                    <label>Ваше имя</label>
+                    <input type="text" id="name" required placeholder="Иван">
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="tel" id="phone" required placeholder="79991234567" maxlength="11">
+                </div>
+                <div class="order-type">
+                    <button type="button" class="type-btn active" data-type="с собой">🚶 С собой</button>
+                    <button type="button" class="type-btn" data-type="на месте">🪑 На месте</button>
+                    <input type="hidden" id="orderType" value="с собой">
+                </div>
+                <div class="form-group">
+                    <label>Комментарий</label>
+                    <textarea id="comment" rows="3" placeholder="Например: без сахара"></textarea>
+                </div>
+                <button type="submit" class="form-btn">Подтвердить заказ</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Кофейня «Аромат». Все права защищены.</p>
+    </footer>
+
+    <!-- Кнопка входа в админку -->
+    <button id="adminBtn">Панель администратора</button>
+
+    <!-- Модальное окно ввода пароля администратора -->
+    <div id="adminPasswordModal">
+        <div class="admin-pwd-box">
+            <span class="admin-pwd-close" id="adminPwdClose">&times;</span>
+            <span class="admin-pwd-icon">🔒</span>
+            <h3>Доступ ограничен</h3>
+            <p>Введите пароль администратора,<br>чтобы войти в панель управления.</p>
+            <input type="password" id="adminPwdInput" placeholder="Пароль" autocomplete="off">
+            <div class="admin-pwd-error" id="adminPwdError">Неверный пароль</div>
+            <button class="admin-pwd-btn" id="adminPwdSubmit">Войти</button>
+            <div class="admin-pwd-hint">Подсказка: COFFEE_ADMIN</div>
+        </div>
+    </div>
+
+    <!-- Скрытый контейнер админ-панели -->
+    <div id="adminOverlay">
+        <div class="close-admin">×</div>
+        <h2>Админ-панель кофейни</h2>
+        <div class="tabs">
+            <div class="tab active" data-tab="menu">Меню</div>
+            <div class="tab" data-tab="reviews">Отзывы</div>
+            <div class="tab" data-tab="orders">Заказы</div>
+        </div>
+
+        <div id="tab-content-menu" class="tab-content active">
+            <h3>Управление меню</h3>
+            <div id="adminMenuGrid"></div>
+            <div class="admin-add-form">
+                <h4>Добавить новую позицию</h4>
+                <div class="form-group">
+                    <label>Название блюда</label>
+                    <input type="text" id="newMenuName" placeholder="Например: Капучино">
+                </div>
+                <div class="form-group">
+                    <label>Цена (₽)</label>
+                    <input type="number" id="newMenuPrice" placeholder="Например: 320">
+                </div>
+                <button class="form-btn" id="addMenuItemBtn">Добавить позицию</button>
+            </div>
+        </div>
+
+        <div id="tab-content-reviews" class="tab-content">
+            <h3>Управление отзывами</h3>
+            <div id="adminReviewsGrid"></div>
+        </div>
+
+        <div id="tab-content-orders" class="tab-content">
+            <h3>Поданные заказы</h3>
+            <div id="adminOrdersGrid"></div>
+        </div>
+    </div>
+
+    <!-- Кастомное модальное окно подтверждения заказа -->
+    <div id="customAlertOverlay" class="custom-alert-overlay">
+        <div class="custom-alert-box">
+            <span class="custom-alert-close-x" id="customAlertCloseX">&times;</span>
+            <span class="custom-alert-icon">☕</span>
+            <h3 class="custom-alert-title">Заказ принят!</h3>
+            <div class="custom-alert-message" id="customAlertMessage"></div>
+            <button class="custom-alert-close-btn" id="customAlertCloseBtn">Отлично</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            /* ---------- 1. Глобальные данные ---------- */
+            const LS = {
+                menu: JSON.parse(localStorage.getItem('coffee_menu')) || [
+                    {id: 1, name: 'Эспрессо', price: 250},
+                    {id: 2, name: 'Капучино', price: 320},
+                    {id: 3, name: 'Латте', price: 350},
+                    {id: 4, name: 'Раф Кофе', price: 380},
+                    {id: 5, name: 'Флэт Уайт', price: 340},
+                    {id: 6, name: 'Мокко', price: 390}
+                ],
+                testimonials: JSON.parse(localStorage.getItem('coffee_testimonials')) || [
+                    {id: Date.now(), name: "Анна С.", rating: 5, text: "Лучший кофе в городе! Атмосфера просто прелесть, обязательно вернусь.", date: "12.05.2024"},
+                    {id: Date.now()-86400000, name: "Дмитрий В.", rating: 5, text: "Мастера-бариста настоящие профессионалы, пробую разные виды и каждый раз в восторге.", date: "10.05.2024"},
+                    {id: Date.now()-172800000, name: "Мария Л.", rating: 5, text: "Уютное место, вкусные выпечки и отличный сервис. Буду приходить снова!", date: "08.05.2024"}
+                ],
+                orders: JSON.parse(localStorage.getItem('coffee_orders')) || []
+            };
+            localStorage.setItem('coffee_menu', JSON.stringify(LS.menu));
+            localStorage.setItem('coffee_testimonials', JSON.stringify(LS.testimonials));
+            localStorage.setItem('coffee_orders', JSON.stringify(LS.orders));
+
+            /* ---------- 2. Toast ---------- */
+            function showToast(msg) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = msg;
+                container.appendChild(toast);
+                requestAnimationFrame(() => { toast.classList.add('visible'); });
+                setTimeout(() => { toast.classList.remove('visible'); setTimeout(() => toast.remove(), 300); }, 3000);
+            }
+
+            /* ---------- 3. РЕНДЕР МЕНЮ НА САЙТЕ ---------- */
+            function renderSiteMenu() {
+                const grid = document.getElementById('menuGrid');
+                grid.innerHTML = '';
+                LS.menu.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'menu-card';
+                    div.innerHTML = `
+                        <div class="img-placeholder"></div>
+                        <h4>${item.name}</h4>
+                        <p>Классический вкус</p>
+                        <span class="price">${item.price} ₽</span>
+                        <button class="btn-add" data-name="${item.name}" data-price="${item.price}">Добавить</button>
+                    `;
+                    grid.appendChild(div);
+                });
+                document.querySelectorAll('#menuGrid .btn-add').forEach(b => {
+                    b.addEventListener('click', () => {
+                        const name = b.getAttribute('data-name');
+                        const price = parseInt(b.getAttribute('data-price'));
+                        addToCart(name, price);
+                        showToast(`+ ${name} добавлен`);
+                    });
+                });
+            }
+
+            /* ---------- 4. РЕНДЕР ОТЗЫВОВ НА САЙТЕ ---------- */
+            let currentSortMode = 'newest';
+
+            function renderSiteTestimonials() {
+                const grid = document.getElementById('testimonialGrid');
+                grid.innerHTML = '';
+                const sorted = [...LS.testimonials].sort((a, b) => {
+                    if (currentSortMode === 'newest') return b.id - a.id;
+                    if (currentSortMode === 'oldest') return a.id - b.id;
+                    if (currentSortMode === 'rating') return b.rating - a.rating;
+                    return 0;
+                });
+                sorted.forEach(item => {
+                    let starsHtml = '';
+                    for (let i = 1; i <= 5; i++) {
+                        starsHtml += (i <= item.rating) ? '<span class="filled">★</span>' : '<span>★</span>';
+                    }
+                    const card = document.createElement('div');
+                    card.className = 'testimonial-card';
+                    card.innerHTML = `<div class="stars">${starsHtml}</div><p>"${item.text}"</p><div class="name">${item.name}</div><div class="date">${item.date}</div>`;
+                    grid.appendChild(card);
+                });
+            }
+
+            /* ---------- 5. КОРЗИНА ---------- */
+            let cart = [];
+
+            function renderCart() {
+                const list = document.getElementById('cartItemsList');
+                const total = document.getElementById('totalSum');
+                list.innerHTML = '';
+                let sum = 0;
+                if (cart.length === 0) {
+                    list.innerHTML = '<p style="text-align:center; opacity:0.5;">Корзина пуста</p>';
+                } else {
+                    cart.forEach(item => {
+                        sum += item.price;
+                        const div = document.createElement('div');
+                        div.className = 'cart-item';
+                        div.innerHTML = `<span>${item.name}</span><button class="remove" data-id="${item.id}">✕</button>`;
+                        list.appendChild(div);
+                    });
+                }
+                total.textContent = `${sum} ₽`;
+                list.querySelectorAll('.remove').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        removeFromCart(parseFloat(btn.dataset.id));
+                    });
+                });
+            }
+
+            function addToCart(name, price) {
+                cart.push({ id: Date.now() + Math.random(), name, price });
+                renderCart();
+            }
+
+            function removeFromCart(id) {
+                cart = cart.filter(i => i.id !== id);
+                renderCart();
+                showToast('Убран из корзины');
+            }
+
+            /* ---------- 6. СОРТИРОВКА ОТЗЫВОВ ---------- */
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentSortMode = btn.dataset.sort;
+                    document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.dataset.sort === currentSortMode));
+                    renderSiteTestimonials();
+                });
+            });
+
+            /* ---------- 7. ФОРМА ЗАКАЗА (С КАСТОМНЫМ ОКНОМ) ---------- */
+            const orderForm = document.getElementById('orderForm');
+            const customAlertOverlay = document.getElementById('customAlertOverlay');
+            const customAlertMessage = document.getElementById('customAlertMessage');
+            const customAlertCloseBtn = document.getElementById('customAlertCloseBtn');
+            const customAlertCloseX = document.getElementById('customAlertCloseX');
+
+            function showCustomAlert(messageHtml) {
+                customAlertMessage.innerHTML = messageHtml;
+                customAlertOverlay.classList.add('active');
+            }
+
+            function hideCustomAlert() {
+                customAlertOverlay.classList.remove('active');
+            }
+
+            customAlertCloseBtn.addEventListener('click', hideCustomAlert);
+            customAlertCloseX.addEventListener('click', hideCustomAlert);
+            customAlertOverlay.addEventListener('click', (e) => {
+                if (e.target === customAlertOverlay) hideCustomAlert();
+            });
+
+            orderForm.addEventListener('submit', e => {
+                e.preventDefault();
+                if (cart.length === 0) {
+                    showCustomAlert('Сначала добавьте товары в корзину!');
+                    return;
+                }
+                const name = document.getElementById('name').value.trim();
+                const phone = document.getElementById('phone').value;
+                if (phone.length < 10) {
+                    showCustomAlert('Введите корректный номер телефона.');
+                    return;
+                }
+                const activeTypeBtn = document.querySelector('.type-btn.active');
+                const orderTypeText = activeTypeBtn ? activeTypeBtn.dataset.type : 'с собой';
+                const comment = document.getElementById('comment').value.trim() || '—';
+                const totalSumText = document.getElementById('totalSum').textContent;
+                const newOrder = {
+                    id: Date.now(),
+                    name,
+                    phone,
+                    type: orderTypeText,
+                    sum: parseInt(totalSumText),
+                    date: new Date().toLocaleDateString('ru-RU'),
+                    items: [...cart],
+                    comment: comment
+                };
+                LS.orders.push(newOrder);
+                localStorage.setItem('coffee_orders', JSON.stringify(LS.orders));
+
+                showCustomAlert(
+                    `Спасибо, <strong>${name}</strong>!<br>Ваш заказ на сумму <strong>${totalSumText}</strong> (${orderTypeText}) принят.<br>Мы свяжемся с вами по номеру <strong>${phone}</strong>.`
+                );
+
+                cart = [];
+                renderCart();
+                orderForm.reset();
+                document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('.type-btn[data-type="с собой"]').classList.add('active');
+                document.getElementById('orderType').value = "с собой";
+                renderAdminOrders();
+            });
+
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById('orderType').value = btn.dataset.type;
+                });
+            });
+
+            /* ---------- 8. ЧАСТИЦЫ ---------- */
+            (function() {
+                const particleContainer = document.createElement('div');
+                particleContainer.style.cssText = 'pointer-events:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999;';
+                document.body.appendChild(particleContainer);
+                function createParticlesFromButton(btn) {
+                    const rect = btn.getBoundingClientRect();
+                    const perimeter = 2 * (rect.width + rect.height);
+                    const particleCount = 15;
+                    for (let i = 0; i < particleCount; i++) {
+                        const particle = document.createElement('div');
+                        particle.style.cssText = 'width:6px; height:6px; background:var(--accent-gold); position:fixed; border-radius:50%; pointer-events:none; z-index:9998;';
+                        particleContainer.appendChild(particle);
+                        const rand = Math.random() * perimeter;
+                        let startX = rect.left, startY = rect.top;
+                        if (rand < rect.width) { startX = rect.left + rand; startY = rect.top; }
+                        else if (rand < rect.width + rect.height) { startX = rect.right; startY = rect.top + (rand - rect.width); }
+                        else if (rand < 2*rect.width + rect.height) { startX = rect.left + (rand - rect.width - rect.height); startY = rect.bottom; }
+                        else { startX = rect.left; startY = rect.top + (rand - 2*rect.width - rect.height); }
+                        particle.style.left = startX + 'px';
+                        particle.style.top = startY + 'px';
+                        const destX = (Math.random() - 0.5) * 80;
+                        const destY = (Math.random() - 0.5) * 80;
+                        const anim = particle.animate([
+                            { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                            { transform: `translate(${destX}px,${destY}px) scale(0)`, opacity: 0 }
+                        ], { duration: 900, easing: 'cubic-bezier(0,.9,.57,1)' });
+                        anim.onfinish = () => { particle.remove(); };
+                    }
+                }
+                document.querySelectorAll('.btn, .btn-add').forEach(btn => {
+                    btn.addEventListener('mouseenter', () => { createParticlesFromButton(btn); });
+                });
+            })();
+
+            /* ---------- 9. АДМИН-ПАНЕЛЬ (пароль ВСЕГДА запрашивается) ---------- */
+            const adminBtn = document.getElementById('adminBtn');
+            const adminOverlay = document.getElementById('adminOverlay');
+            const adminPasswordModal = document.getElementById('adminPasswordModal');
+            const adminPwdInput = document.getElementById('adminPwdInput');
+            const adminPwdError = document.getElementById('adminPwdError');
+            const adminPwdSubmit = document.getElementById('adminPwdSubmit');
+            const adminPwdClose = document.getElementById('adminPwdClose');
+
+            adminBtn.addEventListener('click', () => {
+                // Всегда показываем окно ввода пароля при входе в админку
+                adminPwdInput.value = '';
+                adminPwdError.classList.remove('visible');
+                adminPasswordModal.classList.add('active');
+                setTimeout(() => adminPwdInput.focus(), 100);
+            });
+
+            function closePwdModal() {
+                adminPasswordModal.classList.remove('active');
+                adminPwdInput.value = '';
+                adminPwdError.classList.remove('visible');
+            }
+            adminPwdClose.addEventListener('click', closePwdModal);
+            adminPasswordModal.addEventListener('click', (e) => {
+                if (e.target === adminPasswordModal) closePwdModal();
+            });
+
+            function tryAdminLogin() {
+                const pwd = adminPwdInput.value.trim();
+                if (pwd.toUpperCase() === 'COFFEE_ADMIN') {
+                    adminPwdError.classList.remove('visible');
+                    adminPasswordModal.classList.remove('active');
+                    adminOverlay.classList.add('active');
+                    renderAdminMenu();
+                    renderAdminReviews();
+                    renderAdminOrders();
+                    adminPwdInput.value = '';
+                    showToast('Добро пожаловать в админ-панель');
+                } else {
+                    adminPwdError.classList.add('visible');
+                    adminPwdInput.value = '';
+                    adminPwdInput.focus();
+                    const box = document.querySelector('.admin-pwd-box');
+                    box.style.animation = 'none';
+                    void box.offsetWidth;
+                    box.style.animation = 'pwdFadeIn 0.3s ease';
+                }
+            }
+
+            adminPwdSubmit.addEventListener('click', tryAdminLogin);
+            adminPwdInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') tryAdminLogin();
+                if (e.key === 'Escape') closePwdModal();
+            });
+
+            function closeAdminPanel() { adminOverlay.classList.remove('active'); }
+
+            adminOverlay.querySelector('.close-admin').addEventListener('click', closeAdminPanel);
+            adminOverlay.addEventListener('click', (e) => {
+                if (e.target === adminOverlay) closeAdminPanel();
+            });
+
+            document.querySelectorAll('#adminOverlay .tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('#adminOverlay .tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('#adminOverlay .tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById('tab-content-' + tab.dataset.tab).classList.add('active');
+                });
+            });
+
+            /* --- Админ: меню --- */
+            function renderAdminMenu() {
+                const grid = document.getElementById('adminMenuGrid');
+                grid.innerHTML = '';
+                LS.menu.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'menu-card';
+                    div.innerHTML = `
+                        <button class="card-delete" data-id="${item.id}" title="Удалить">✕</button>
+                        <div class="img-placeholder"></div>
+                        <h4>${item.name}</h4>
+                        <p>Классический вкус</p>
+                        <span class="price">${item.price} ₽</span>
+                    `;
+                    grid.appendChild(div);
+                });
+                grid.querySelectorAll('.card-delete').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = parseInt(btn.dataset.id);
+                        LS.menu = LS.menu.filter(i => i.id !== id);
+                        localStorage.setItem('coffee_menu', JSON.stringify(LS.menu));
+                        renderAdminMenu();
+                        renderSiteMenu();
+                        showToast('Позиция удалена из меню');
+                    });
+                });
+            }
+
+            document.getElementById('addMenuItemBtn').addEventListener('click', () => {
+                const name = document.getElementById('newMenuName').value.trim();
+                const price = parseInt(document.getElementById('newMenuPrice').value);
+                if (!name || isNaN(price)) { alert('Заполните все поля'); return; }
+                LS.menu.push({ id: Date.now(), name, price });
+                localStorage.setItem('coffee_menu', JSON.stringify(LS.menu));
+                renderAdminMenu();
+                renderSiteMenu();
+                showToast('Позиция добавлена в меню');
+                document.getElementById('newMenuName').value = '';
+                document.getElementById('newMenuPrice').value = '';
+            });
+
+            /* --- Админ: отзывы --- */
+            function renderAdminReviews() {
+                const grid = document.getElementById('adminReviewsGrid');
+                grid.innerHTML = '';
+                if (LS.testimonials.length === 0) {
+                    grid.innerHTML = '<p class="empty-state">Пока нет отзывов</p>';
+                    return;
+                }
+                const sorted = [...LS.testimonials].sort((a, b) => b.id - a.id);
+                sorted.forEach(item => {
+                    let starsHtml = '';
+                    for (let i = 1; i <= 5; i++) {
+                        starsHtml += (i <= item.rating) ? '<span class="filled">★</span>' : '<span>★</span>';
+                    }
+                    const card = document.createElement('div');
+                    card.className = 'testimonial-card';
+                    card.innerHTML = `
+                        <button class="card-delete" data-id="${item.id}" title="Удалить">✕</button>
+                        <div class="stars">${starsHtml}</div>
+                        <p>"${item.text}"</p>
+                        <div class="name">${item.name}</div>
+                        <div class="date">${item.date}</div>
+                    `;
+                    grid.appendChild(card);
+                });
+                grid.querySelectorAll('.card-delete').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = parseInt(btn.dataset.id);
+                        LS.testimonials = LS.testimonials.filter(i => i.id !== id);
+                        localStorage.setItem('coffee_testimonials', JSON.stringify(LS.testimonials));
+                        renderSiteTestimonials();
+                        renderAdminReviews();
+                        showToast('Отзыв удален');
+                    });
+                });
+            }
+
+            /* --- Админ: заказы --- */
+            function renderAdminOrders() {
+                const grid = document.getElementById('adminOrdersGrid');
+                grid.innerHTML = '';
+                if (LS.orders.length === 0) {
+                    grid.innerHTML = '<p class="empty-state">Заказов пока нет</p>';
+                    return;
+                }
+                const sorted = [...LS.orders].sort((a, b) => b.id - a.id);
+                sorted.forEach(order => {
+                    const div = document.createElement('div');
+                    div.className = 'order-card';
+
+                    let itemsHtml = '';
+                    if (order.items && order.items.length > 0) {
+                        itemsHtml = '<div class="order-items"><div class="items-title">Состав заказа</div>';
+                        order.items.forEach(it => {
+                            itemsHtml += `<div class="item-line"><span>${it.name}</span><span>${it.price} ₽</span></div>`;
+                        });
+                        itemsHtml += '</div>';
+                    }
+
+                    const commentHtml = order.comment ? `<div class="order-row"><span class="label">Комментарий:</span><span class="value">${order.comment}</span></div>` : '';
+
+                    div.innerHTML = `
+                        <div class="order-header">
+                            <span class="order-id">Заказ #${order.id}</span>
+                            <span class="order-date">${order.date}</span>
+                        </div>
+                        <div class="order-row"><span class="label">Клиент:</span><span class="value">${order.name}</span></div>
+                        <div class="order-row"><span class="label">Телефон:</span><span class="value">${order.phone}</span></div>
+                        <div class="order-row"><span class="label">Тип:</span><span class="value">${order.type}</span></div>
+                        ${commentHtml}
+                        ${itemsHtml}
+                        <div class="order-total"><span>Итого:</span><span>${order.sum} ₽</span></div>
+                        <button class="order-delete-btn" data-id="${order.id}">Удалить заказ</button>
+                    `;
+                    grid.appendChild(div);
+                });
+                grid.querySelectorAll('.order-delete-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = parseInt(btn.dataset.id);
+                        LS.orders = LS.orders.filter(o => o.id !== id);
+                        localStorage.setItem('coffee_orders', JSON.stringify(LS.orders));
+                        renderAdminOrders();
+                        showToast('Заказ удален');
+                    });
+                });
+            }
+
+            /* ---------- 10. МОДАЛЬНОЕ ОКНО ОТЗЫВА ---------- */
+            const reviewModal = document.getElementById('reviewModal');
+            const openReviewModalBtn = document.getElementById('openReviewModalBtn');
+            const reviewModalClose = document.querySelector('.review-modal-close');
+            const reviewStars = document.querySelectorAll('#reviewStars span');
+            const reviewRating = document.getElementById('reviewRating');
+
+            function paintStars(value) {
+                reviewStars.forEach((s, idx) => {
+                    if (idx < value) {
+                        s.classList.add('active');
+                        s.style.color = 'var(--accent-gold)';
+                    } else {
+                        s.classList.remove('active');
+                        s.style.color = 'rgba(255,255,255,0.2)';
+                    }
+                });
+            }
+
+            function resetReviewForm() {
+                document.getElementById('reviewText').value = '';
+                document.getElementById('reviewName').value = '';
+                reviewRating.value = '';
+                paintStars(0);
+            }
+
+            openReviewModalBtn.addEventListener('click', () => {
+                resetReviewForm();
+                reviewModal.style.display = 'flex';
+            });
+
+            reviewModalClose.addEventListener('click', () => {
+                reviewModal.style.display = 'none';
+                resetReviewForm();
+            });
+
+            reviewModal.addEventListener('click', (e) => {
+                if (e.target === reviewModal) {
+                    reviewModal.style.display = 'none';
+                    resetReviewForm();
+                }
+            });
+
+            reviewStars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const value = parseInt(star.dataset.value);
+                    reviewRating.value = value;
+                    paintStars(value);
+                });
+            });
+
+            document.getElementById('submitReview').addEventListener('click', function() {
+                const text = document.getElementById('reviewText').value.trim();
+                const name = document.getElementById('reviewName').value.trim();
+                const rating = parseInt(reviewRating.value);
+                if (!text || !name || !rating) {
+                    alert('Заполните все поля: текст, имя и выберите рейтинг');
+                    return;
+                }
+                const newReview = {
+                    id: Date.now(),
+                    name: name,
+                    rating: rating,
+                    text: text,
+                    date: new Date().toLocaleDateString('ru-RU')
+                };
+                LS.testimonials.push(newReview);
+                localStorage.setItem('coffee_testimonials', JSON.stringify(LS.testimonials));
+                renderSiteTestimonials();
+                renderAdminReviews();
+                showToast('Отзыв опубликован');
+                reviewModal.style.display = 'none';
+                resetReviewForm();
+            });
+
+            /* ---------- 11. ПЛАВНАЯ ПРОКРУТКА ДЛЯ КНОПОК "НАШЕ МЕНЮ" И "ЗАКАЗАТЬ СЕЙЧАС" ---------- */
+            // Обработка для кнопок в hero
+            document.querySelectorAll('.btn-container a[href^="#"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            // Обработка для ссылок навигации
+            document.querySelectorAll('.nav-links a[href^="#"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            /* ---------- 12. ИНИЦИАЛЬНЫЙ РЕНДЕР ---------- */
+            renderSiteMenu();
+            renderSiteTestimonials();
+            renderCart();
+            renderAdminOrders();
+        });
+    </script>
+</body>
+</html>
